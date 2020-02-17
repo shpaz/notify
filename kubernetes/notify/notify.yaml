@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: notify
+spec:
+  parallelism: 1
+  template:
+    metadata: 
+      name: notify
+    spec: 
+      containers:
+        - image: shonpaz123/notify
+          name: notify
+          args:
+               ["--endpoint-url", "http://rook-ceph-rgw-my-store.rook-ceph.svc.cluster.local",
+                "--access-key", "3LKJDV5JDZQ9W7T5WLW6", 
+                "--secret-key", "C9sV8XolsUY0ukd6EEjJd1YTBDIHY38nU0cANzCB",
+                "--bucket", "notifications",
+                "--kafka-endpoint", "bootstrap.kafka.svc.cluster.local", 
+                "--topic", "notifications"]
+      restartPolicy: Never
