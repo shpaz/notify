@@ -1,6 +1,5 @@
 ## Deploying Notify tool on Kubernetes 
 
-## Introducation 
 Notify is a tool used with Ceph's Bucket Notifications feature (released in Ceph's new major version, RHCS4.0). To use Bucket 
 Notifications feature we have to configure two things: 
 * Topic 
