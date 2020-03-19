@@ -1,4 +1,4 @@
-Deploying Notify tool on Kubernetes 
+## Deploying Notify tool on Kubernetes 
 
 ## Introducation 
 Notify is a tool used with Ceph's Bucket Notifications feature (released in Ceph's new major version, RHCS4.0). To use Bucket 
@@ -65,3 +65,14 @@ spec:
       restartPolicy: Never
 ```
 As you see, this is an example of using rook-ceph as S3 service and strimzi as Kafka cluster. 
+After you have notify job in locally, just run the following command: 
+
+```bash 
+kubectl create -f notify.yaml
+``` 
+Now Verify the job has completed successfuly: 
+
+```bash 
+NAME                                                           READY   STATUS      RESTARTS   AGE
+notify-5z6xq                                                  0/1     Completed   0          2m
+``` 
