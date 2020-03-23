@@ -6,7 +6,6 @@
 import boto3
 import json
 import botocore
-import humanfriendly
 import argparse
 import urllib.parse
 
