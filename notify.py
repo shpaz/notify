@@ -8,7 +8,6 @@ import json
 import botocore
 import argparse
 import urllib.parse
-import time
 
 '''This class configures bucket notifications for both kafka and rabbitmq endpoints for real-time message queuing'''
 
@@ -118,7 +117,7 @@ if __name__ == '__main__':
 
     # create sns-like topic sent to MQ endpoint 
     notifier.create_sns_topic()
-    time.sleep(300)
+
     # configures object creation and removal based notification for the bucket
     notifier.configure_bucket_notification()
 
