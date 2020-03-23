@@ -1,6 +1,10 @@
 # choose python image
 FROM python:3.7-alpine
 
+# create a user to have minimal access 
+RUN useradd -ms /bin/bash notifier 
+USER notifier 
+
 # install needed pip packages
 WORKDIR /usr/src/app
 COPY notify.py ./
