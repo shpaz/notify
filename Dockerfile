@@ -1,6 +1,9 @@
 # choose python image
 FROM python:3.7.7-alpine3.11
 
+USER root 
+
+# add api extensions added for tag/metadata filters 
 RUN mkdir -p ~/.aws/models/s3/2006-03-01/ 
 COPY service-2.sdk-extras.json ~/.aws/models/s3/2006-03-01/
  

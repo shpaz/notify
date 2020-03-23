@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tags
+spec:
+  parallelism: 1
+  template:
+    metadata: 
+      name: tags
+    spec: 
+      containers:
+        - image: shonpaz123/notify
+          imagePullPolicy: Always
+          name: tags
+          args:
+                  ["--endpoint-url", "http://10.128.0.156:8000",
+                "--access-key", "UCKKUFGSHC37GK5R8A03", 
+                "--secret-key", "nKn9CkQywKhN2oJY9sp9sWlyfI4skIPoCdYkd0On",
+                "--bucket", "tags",
+                "--kafka-endpoint", "10.128.0.159:9092", 
+                "--topic", "notifications", 
+                "--filter", '{"Tags": {"FilterRules": [{"Name": "color", "Value": "blue"}]}}']
+      restartPolicy: Never
+      
