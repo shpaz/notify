@@ -5,6 +5,8 @@ FROM python:3.7-alpine
 RUN addgroup -g 1000 -S notifier && \
     adduser -u 1000 -S notifier -G notifier
 
+USER notifier 
+
 # install needed pip packages
 WORKDIR /usr/src/app
 COPY notify.py ./
