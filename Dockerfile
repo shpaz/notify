@@ -1,5 +1,5 @@
 # choose python image
-FROM python:3
+FROM python:3.7.7-alpine3.11
 
 # install needed pip packages
 WORKDIR /usr/src/app

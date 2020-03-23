@@ -27,6 +27,7 @@ class Notifier:
         parser.add_argument('-ae', '--amqp-endpoint', help='amqp endpoint in which rgw will send notifications to', required=False)
         parser.add_argument('-he', '--http-endpoint', help='http endpoint in which rgw will send notifications to', required=False)
         parser.add_argument('-t', '--topic', help='topic name in which rgw will send notifications to', required=True)
+        parser.add_argument('-f', '--filter', help='A filter such as prefix, suffix, metadata or tags', required=False)
 
 
         # parsing all arguments
@@ -41,6 +42,7 @@ class Notifier:
         self.http_endpoint = args.http_endpoint
         self.amqp_endpoint = args.amqp_endpoint
         self.topic = args.topic
+        self.filter = args.filter 
         self.sns = boto3.client('sns', 
                                endpoint_url=self.endpoint_url, 
                                aws_access_key_id=self.access_key,
@@ -67,7 +69,7 @@ class Notifier:
         elif(self.amqp_endpoint): 
             endpoint_args = 'push-endpoint=amqp://' + self.amqp_endpoint + '&amqp-exchange=' + self.exchange_name + '&amqp-ack-level=broker'
        
-        # in case wanted MQ endpoint is rabbitmq
+        # in case wanted MQ endpoint is http
         elif(self.http_endpoint):
             endpoint_args = 'push-endpoint=' + self.http_endpoint 
 
@@ -78,14 +80,17 @@ class Notifier:
         # parsing given args to attributes 
         attributes = {nvp[0]: nvp[1] for nvp in urllib.parse.parse_qsl(endpoint_args, keep_blank_values=True)}
         
-        # creates the wanted sns-like topic on RGW
+        # creates the wanted sns-like topic on RGW and gets the topic's ARN
         self.topic_arn = self.sns.create_topic(Name=self.topic, Attributes=attributes)['TopicArn']
 
     ''' This function configures bucket notification for object creation and removal '''
     def configure_bucket_notification(self): 
         
-        # creates a bucket if not exists
-        self.s3.create_bucket(Bucket = self.bucket_name)
+        # creates a bucket if it doesn't exists
+        try: 
+            self.s3.head_bucket(Bucket=self.bucket_name)
+        except botocore.exceptions.ClientError:
+            self.s3.create_bucket(Bucket = self.bucket_name)
 
         # initial dictionary 
         bucket_notifications_configuration = {
@@ -97,6 +102,10 @@ class Notifier:
                 }
             ]
         }
+        
+        # in case the user has provided a filter to use 
+        if(self.filter):
+            bucket_notifications_configuration['TopicConfigurations'][0].update({'Filter': json.loads(self.filter)})
 
         # pushed the notification configuration to the bucket 
         self.s3.put_bucket_notification_configuration(Bucket = self.bucket_name,
