@@ -8,6 +8,7 @@ import json
 import botocore
 import argparse
 import urllib.parse
+import time
 
 '''This class configures bucket notifications for both kafka and rabbitmq endpoints for real-time message queuing'''
 
@@ -120,4 +121,6 @@ if __name__ == '__main__':
 
     # configures object creation and removal based notification for the bucket
     notifier.configure_bucket_notification()
+
+    time.sleep(300)
 
