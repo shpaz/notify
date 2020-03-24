@@ -1,12 +1,12 @@
-## Notify tool 
+# Notify tool 
 
-# Introduction 
+## Introduction 
 
 This repository contains the source code of `notify` tool, which is a python3 based tool wrapped by a container used to configure Ceph Bucket Notifications easily. This tool gets few parameters such as endpoint_url, access_key, secret_key, topic etc and use them to configure the bucket notifications. 
 Notify tool, will create a topic that will eventually get the notifications for the object's creation/removal and move them into the MQ endpoint. As Ceph Bucket Notifications feature, Notify also supports push-endpoints for AMQP/Kafka/HTTP targets.
 Notify tool is supported for Kubernetes and Openshift environments, examples can be found in the relevant directories in this repository. 
 
-# Installation 
+## Installation 
 
 To run notify, please pull the docker image: 
 ```bash 
@@ -42,5 +42,5 @@ optional arguments:
 ```
 Here you can see all the needed parameters where you have to specify the endpoint url, access key, secret key, bucket name and the topic name. You have the ability to choose whether you want to use Kafka/AMQP/HTTP endpoints, just specify the url and notify will automatically use it to create the push endpoint. 
 
-# Filters 
+## Filters 
 In Octopus (future RHCS5.X version), there is also filter support, which means you can decide which object will be notified according to a given filter pattern. supported filters are prefix/suffix/regex/metadata/tags. When using the proper Ceph version, you could specify a filter and notify will configure the bucket notification for you. 
