@@ -13,9 +13,9 @@ spec:
           imagePullPolicy: Always
           name: tags
           args:
-                  ["--endpoint-url", "http://10.128.0.156:8000",
-                "--access-key", "UCKKUFGSHC37GK5R8A03", 
-                "--secret-key", "nKn9CkQywKhN2oJY9sp9sWlyfI4skIPoCdYkd0On",
+                  ["--endpoint-url", "http://10.128.1.15:8000",
+                "--access-key", "V7YD1B56TEE1DBLCOQFE", 
+                "--secret-key", "LCqqa0QowS4OTl5PwVwXiwOIIf7lMwnyoXYrSDz3",
                 "--bucket", "tags",
                 "--kafka-endpoint", "10.128.0.159:9092", 
                 "--topic", "notifications", 
