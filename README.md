@@ -1,7 +1,5 @@
 # Notify tool 
 
-## Introduction 
-
 This repository contains the source code of `notify` tool, which is a python3 based tool wrapped by a container used to configure Ceph Bucket Notifications easily. This tool gets few parameters such as endpoint_url, access_key, secret_key, topic etc and use them to configure the bucket notifications. 
 Notify tool, will create a topic that will eventually get the notifications for the object's creation/removal and move them into the MQ endpoint. As Ceph Bucket Notifications feature, Notify also supports push-endpoints for AMQP/Kafka/HTTP targets.
 Notify tool is supported for Kubernetes and Openshift environments, examples can be found in the relevant directories in this repository. 
