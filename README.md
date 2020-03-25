@@ -15,7 +15,7 @@ A help manual will be printed by using ```docker run shonpaz123/notify -h``` com
 ```bash 
 usage: notify.py [-h] -e ENDPOINT_URL -a ACCESS_KEY -s SECRET_KEY -b
                  BUCKET_NAME [-ke KAFKA_ENDPOINT] [-ae AMQP_ENDPOINT]
-                 [-he HTTP_ENDPOINT] -t TOPIC [-f FILTER]
+                 [-he HTTP_ENDPOINT] -t TOPIC [-f FILTER] [-o DATA] [-x EXCHANGE] [-n NOTIFICATION]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -37,6 +37,13 @@ optional arguments:
                         topic name in which rgw will send notifications to
   -f FILTER, --filter FILTER
                         A filter such as prefix, suffix, metadata or tags
+   -o DATA, --opaque DATA
+                        opaque data that will be sent in the notifications
+   -x EXCHANGE, --exchange EXCHANGE
+                        amqp exchange name (mandatory for amqp endpoints)
+   -n NOTIFICATION, --notification NOTIFICATION
+                        notification name, allows for setting multiple notifications on the same bucket (default "configuration")
+
 ```
 Here you can see all the needed parameters where you have to specify the endpoint url, access key, secret key, bucket name and the topic name. You have the ability to choose whether you want to use Kafka/AMQP/HTTP endpoints, just specify the url and notify will automatically use it to create the push endpoint. 
 

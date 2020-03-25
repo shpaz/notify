@@ -7,7 +7,6 @@ import boto3
 import json
 import botocore
 import argparse
-import urllib.parse
 
 '''This class configures bucket notifications for both kafka and rabbitmq endpoints for real-time message queuing'''
 
@@ -26,8 +25,10 @@ class Notifier:
         parser.add_argument('-ae', '--amqp-endpoint', help='amqp endpoint in which rgw will send notifications to', required=False)
         parser.add_argument('-he', '--http-endpoint', help='http endpoint in which rgw will send notifications to', required=False)
         parser.add_argument('-t', '--topic', help='topic name in which rgw will send notifications to', required=True)
-        parser.add_argument('-f', '--filter', help='A filter such as prefix, suffix, metadata or tags', required=False)
-
+        parser.add_argument('-f', '--filter', help='filter such as prefix, suffix, metadata or tags', required=False)
+        parser.add_argument('-o', '--opaque', help='opaque data that will be sent in the notifications', required=False)
+        parser.add_argument('-x', '--exchange', help='amqp exchange name (mandatory for amqp endpoints)', required=False)
+        parser.add_argument('-n', '--notification', help='notification name, allows for setting multiple notifications on the same bucket', required=False, default="configuration")
 
         # parsing all arguments
         args = parser.parse_args()
@@ -42,6 +43,9 @@ class Notifier:
         self.amqp_endpoint = args.amqp_endpoint
         self.topic = args.topic
         self.filter = args.filter 
+        self.opaque = args.opaque
+        self.exchange = args.exchange
+        self.notification = args.notification
         self.sns = boto3.client('sns', 
                                endpoint_url=self.endpoint_url, 
                                aws_access_key_id=self.access_key,
@@ -59,26 +63,31 @@ class Notifier:
 
     ''' This function creates and sns-like topic with configured push endpoint'''
     def create_sns_topic(self):
-        
+     
+        attributes = {}
+
+        if self.opaque:
+            attributes['OpaqueData'] = self.opaque
+
         # in case wanted MQ endpoint is kafka 
         if(self.kafka_endpoint):
-            endpoint_args = 'push-endpoint=kafka://' + self.kafka_endpoint + '&kafka-ack-level=broker'
+            attributes['push-endpoint'] = 'kafka://' + self.kafka_endpoint
+            attributes['kafka-ack-level'] = 'broker'
         
         # in case wanted MQ endpoint is rabbitmq
         elif(self.amqp_endpoint): 
-            endpoint_args = 'push-endpoint=amqp://' + self.amqp_endpoint + '&amqp-exchange=' + self.exchange_name + '&amqp-ack-level=broker'
+            attributes['push-endpoint'] = 'amqp://' + self.amqp_endpoint
+            attributes['amqp-exchange'] = self.exchange_name
+            attributes['amqp-ack-level'] = 'broker'
        
         # in case wanted MQ endpoint is http
         elif(self.http_endpoint):
-            endpoint_args = 'push-endpoint=' + self.http_endpoint 
+            attributes['push-endpoint'] = 'http://' + self.http_endpoint
 
         # in case wanted MQ endpoint is not provided by the user 
         else:
             raise Exception("please configure a push endpoint!")
 
-        # parsing given args to attributes 
-        attributes = {nvp[0]: nvp[1] for nvp in urllib.parse.parse_qsl(endpoint_args, keep_blank_values=True)}
-        
         # creates the wanted sns-like topic on RGW and gets the topic's ARN
         self.topic_arn = self.sns.create_topic(Name=self.topic, Attributes=attributes)['TopicArn']
 
@@ -95,7 +104,7 @@ class Notifier:
         bucket_notifications_configuration = {
             "TopicConfigurations": [
                 {
-                    "Id": "configuration",
+                    "Id": self.notification,
                     "TopicArn": self.topic_arn,
                     "Events": ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
                 }
